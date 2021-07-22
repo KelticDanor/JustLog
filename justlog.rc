@@ -1,0 +1,64 @@
+#include "windows.h"
+#include "afxres.h"
+
+1000 DIALOGEX 20, 10, 379, 187
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Just Log - General Plugin Configuration"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,324,168,50,14
+    CONTROL         "Show cuesheet and net stream titles (requires 3.4.1)",10,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,171,190,10
+    CONTROL         "Make New [Keep Log]",20,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,259,103,111,10
+    EDITTEXT        99001,109,7,264,14,ES_AUTOHSCROLL
+    LTEXT           "Log File Path",IDC_STATIC,9,10,92,8
+    LTEXT           "[Local File] String Format",IDC_STATIC,9,26,92,8
+    EDITTEXT        99002,109,23,264,14,ES_AUTOHSCROLL
+    LTEXT           "%1 = Title",IDC_STATIC,112,55,54,8
+    LTEXT           "%2 = Artist",IDC_STATIC,178,55,54,8
+    LTEXT           "%3 = Album",IDC_STATIC,242,55,54,8
+    LTEXT           "%8 = File Type",IDC_STATIC,309,56,54,8
+    LTEXT           "%d = Day",IDC_STATIC,112,63,54,8
+    LTEXT           "%m = Month",IDC_STATIC,178,63,54,8
+    LTEXT           "%y = Year",IDC_STATIC,242,63,54,8
+    LTEXT           "%h = Hour",IDC_STATIC,309,63,54,8
+    LTEXT           "%i = Minute",IDC_STATIC,112,71,54,8
+    LTEXT           "%s = Second",IDC_STATIC,178,71,54,8
+    LTEXT           "%t = Tab Delimeter",IDC_STATIC,309,71,54,8
+    COMBOBOX        99003,109,86,264,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Logging Action",IDC_STATIC,10,88,92,8
+    EDITTEXT        99004,109,101,74,14,ES_AUTOHSCROLL
+    LTEXT           "Max Size [If Append]",IDC_STATIC,10,104,92,8
+    LTEXT           "KB [0 = Unlimited]",IDC_STATIC,188,104,60,8
+    LTEXT           "Exclude Types [MP3;FLAC]",IDC_STATIC,10,125,92,8
+    EDITTEXT        99005,109,122,264,14,ES_AUTOHSCROLL
+    CONTROL         "Exclude Files",30,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,109,140,60,10
+    CONTROL         "Exclude Streams",40,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,188,140,60,10
+    LTEXT           "[Stream] String Format",IDC_STATIC,9,42,92,8
+    EDITTEXT        99006,109,39,264,14,ES_AUTOHSCROLL
+END
+
+1 VERSIONINFO
+ FILEVERSION 1,4,0,0
+ PRODUCTVERSION 0,0,0,0
+ FILEFLAGSMASK 0x0L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "04090000"
+        BEGIN
+            VALUE "CompanyName", "Nathan Hindley\0"
+            VALUE "FileDescription", "Just Log - General Plugin\0"
+            VALUE "FileVersion", "rev.3\0"
+            VALUE "LegalCopyright", "zlib License\0"
+        END
+    END
+END
