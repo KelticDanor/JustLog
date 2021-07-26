@@ -1,48 +1,4 @@
-/*
-  XMPlay MSN Plugin (c) 2005-2006 Elliott Sales de Andrade
-
-Copyright (c) 2005-2006 Elliott Sales de Andrade
-
-This software is provided 'as-is', without any express or implied warranty.
-In no event will the authors be held liable for any damages arising from the
-use of this software.
-
-Permission is granted to anyone to use this software for any purpose,
-including commercial applications, and to alter it and redistribute it freely,
-subject to the following restrictions:
-
-    1. The origin of this software must not be misrepresented; you must not
-       claim that you wrote the original software. If you use this software
-       in a product, an acknowledgment in the product documentation would be
-       appreciated but is not required.
-
-    2. Altered source versions must be plainly marked as such, and must not
-       be misrepresented as being the original software.
-
-    3. This notice may not be removed or altered from any source distribution.
-
-Update 7
-  - set XMPDSP_FLAG_NODSP flag (for "general" plugin)
-Update 6
-  - cue/stream titles
-Update 5
-  - XMPlay 3.4 support
-Update 4, Elliott Sales de Andrade
-  - Fall back to ANSI processing on Windows 9x/ME
-Update 3, Elliott Sales de Andrade
-  - should fix Unicode characters
-  - fixed buffer overflow
-  - no more major warnings
-Update 2, Elliott Sales de Andrade
-  - Incorporate Svante's changes to my copy
-  - Stop showing "XMPlay 3.2"
-  - Mini config
-  - Source rearrangements
-Update 1, Svante Boberg
-  - Fixed crash when trying to open configuration
-  - Safer release of subclass, sometimes crashed the player in last version
-  - Automatically sets MSN now playing when loading plugin
-*/
+// XMPlay Just Log general plugin v1.4 (c) 2021 Nathan Hindley
 
 #include <windows.h>
 #include <iostream>
