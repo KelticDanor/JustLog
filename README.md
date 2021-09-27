@@ -8,7 +8,7 @@ Just a short and sweet plug-in to log files played by XMPlay.
 v1.5
 - %0 filename added to string formatting
 - Tab order fixed a little bit
-- 
+
 v1.4
 - If make new is not checked the existing file will just remove the oldest lines
 - The old file doesn't have .s in the name anymore
