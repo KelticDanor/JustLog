@@ -1,4 +1,6 @@
-// XMPlay Just Log general plugin v1.4 (c) 2021 Nathan Hindley
+/*
+  XMPlay Just Log
+*/
 
 #include <windows.h>
 #include <iostream>
@@ -108,6 +110,7 @@ static void WINAPI SetNowPlaying(BOOL close,std::string SRC)
 	char *artist=NULL;
 	char *album=NULL;
 	char *filetype=NULL;
+	char *filename=NULL;
 	int resultIdx;
 	std::string resultStr;
 	int excludeIdx;
@@ -135,6 +138,7 @@ static void WINAPI SetNowPlaying(BOOL close,std::string SRC)
 		if (!artist) artist=xmpfmisc->GetTag(TAG_ARTIST); // get track artist
 		if (!album) album=xmpfmisc->GetTag(TAG_ALBUM); // get track album
 		if (!filetype) filetype=xmpfmisc->GetTag(TAG_FILETYPE); // get track filetype
+		if (!filename) filename=xmpfmisc->GetTag(TAG_FILENAME); // get track filename
 	}
 
 	if (msnConf.excFile || msnConf.excStream) {
@@ -197,6 +201,13 @@ static void WINAPI SetNowPlaying(BOOL close,std::string SRC)
 						resultStr.replace(resultStr.find("%8"), 2, "-");
 					} else {
 						resultStr.replace(resultStr.find("%8"), 2, filetype);
+					}
+				}
+				while (resultStr.find("%0") != -1) {
+					if (!filetype) {
+						resultStr.replace(resultStr.find("%0"), 2, "-");
+					} else {
+						resultStr.replace(resultStr.find("%0"), 2, filename);
 					}
 				}
 				while (resultStr.find("%y") != -1) {
@@ -275,7 +286,7 @@ static void WINAPI DSP_About(HWND win)
 {
 	MessageBox(win,
 		"Just Log - General Plugin\nCopyright (c) 2021 Nathan Hindley",
-		"Just Log - General Plugin [Rev.4]",
+		"Just Log - General Plugin [Rev.5]",
 		MB_ICONINFORMATION);
 }
 
