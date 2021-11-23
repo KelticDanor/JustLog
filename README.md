@@ -5,6 +5,22 @@ JustLog General Plugin for the XMPlay audio player
 Just a short and sweet plug-in to log files played by XMPlay.
 
 # Change Log
+v1.8
+- Added %4 tag for date
+- Added %5 tag for track
+- Added %6 tag for genre
+- Added %7 tag for comment
+- Added %n tag for new line
+- Fixed "Exclude untitled" option crash
+- String format length is now 125 characters up from 50
+
+v1.7
+- Added %z tag for stream title if present
+
+v1.6
+- New option to remove path from %0 filename
+- New option to include even if there is no title
+
 v1.5
 - %0 filename added to string formatting
 - Tab order fixed a little bit
