@@ -1,7 +1,7 @@
 #include "windows.h"
 #include "afxres.h"
 
-1000 DIALOGEX 20, 10, 379, 187
+1000 DIALOGEX 20, 10, 379, 199
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Just Log - General Plugin Configuration"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
@@ -16,27 +16,35 @@ BEGIN
     LTEXT           "%1 = Title",IDC_STATIC,178,55,54,8
     LTEXT           "%2 = Artist",IDC_STATIC,242,55,54,8
     LTEXT           "%3 = Album",IDC_STATIC,309,55,54,8
-    LTEXT           "%8 = File Type",IDC_STATIC,112,63,54,8
-    LTEXT           "%d = Day",IDC_STATIC,178,63,54,8
-    LTEXT           "%m = Month",IDC_STATIC,242,63,54,8
-    LTEXT           "%y = Year",IDC_STATIC,309,63,54,8
-    LTEXT           "%h = Hour",IDC_STATIC,112,71,54,8
-    LTEXT           "%i = Minute",IDC_STATIC,178,71,54,8
-    LTEXT           "%s = Second",IDC_STATIC,242,71,54,8
-    LTEXT           "%t = Tab Delimeter",IDC_STATIC,309,71,54,8
-    LTEXT           "Logging Action",IDC_STATIC,10,88,92,8
-    COMBOBOX        99003,109,86,264,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Max Size [If Append]",IDC_STATIC,10,104,92,8
-    EDITTEXT        99004,109,101,74,14,ES_AUTOHSCROLL
-    LTEXT           "KB [0 = Unlimited]",IDC_STATIC,188,104,60,8
-    CONTROL         "Make New [Keep Log]",20,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,259,103,111,10
-    LTEXT           "Exclude Types [MP3;FLAC]",IDC_STATIC,10,125,92,8
-    EDITTEXT        99005,109,122,264,14,ES_AUTOHSCROLL
-    CONTROL         "Exclude Files",30,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,109,140,60,10
-    CONTROL         "Exclude Streams",40,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,188,140,60,10
+    LTEXT           "%4 = Date",IDC_STATIC,112,63,54,8
+    LTEXT           "%5 = Track",IDC_STATIC,178,63,54,8
+    LTEXT           "%6 = Genre",IDC_STATIC,242,63,54,8
+    LTEXT           "%7 = Comment",IDC_STATIC,309,63,54,8
+    LTEXT           "%8 = File Type",IDC_STATIC,112,71,54,8
+    LTEXT           "%d = Day",IDC_STATIC,178,71,54,8
+    LTEXT           "%m = Month",IDC_STATIC,242,71,54,8
+    LTEXT           "%y = Year",IDC_STATIC,309,71,54,8
+    LTEXT           "%h = Hour",IDC_STATIC,112,79,54,8
+    LTEXT           "%i = Minute",IDC_STATIC,178,79,54,8
+    LTEXT           "%s = Second",IDC_STATIC,242,79,54,8
+    LTEXT           "%t = Tab Delimiter",IDC_STATIC,309,79,54,8
+    LTEXT           "%n = New Line",IDC_STATIC,242,86,54,8
+    LTEXT           "%z = Stream Title",IDC_STATIC,309,86,54,8
+    CONTROL         "Remove path from %0 Filename",60,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,109,88,122,10
+    LTEXT           "Logging Action",IDC_STATIC,10,109,92,8
+    COMBOBOX        99003,109,107,264,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Max Size [If Append]",IDC_STATIC,10,125,92,8
+    EDITTEXT        99004,109,122,74,14,ES_AUTOHSCROLL
+    LTEXT           "KB [0 = Unlimited]",IDC_STATIC,188,125,60,8
+    CONTROL         "Make New [Keep Log]",20,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,259,124,111,10
+    LTEXT           "Exclude Types [MP3;FLAC]",IDC_STATIC,10,146,92,8
+    EDITTEXT        99005,109,143,264,14,ES_AUTOHSCROLL
+    CONTROL         "Exclude Files",30,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,109,161,60,10
+    CONTROL         "Exclude Streams",40,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,188,161,60,10
+    CONTROL         "Exclude Untitled",50,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,259,161,75,10
     CONTROL         "Show cuesheet and net stream titles (requires 3.4.1)",10,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,171,190,10
-    DEFPUSHBUTTON   "OK",IDOK,324,168,50,14
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,182,190,10
+    DEFPUSHBUTTON   "OK",IDOK,324,179,50,14
 END
 
 1 VERSIONINFO

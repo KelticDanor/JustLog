@@ -35,13 +35,15 @@ typedef struct {
     BOOL showCues;
     BOOL newLogSet;
     char filePath[255];
-    char fileString[50];
+    char fileString[125];
     char actionConfig[25];
     char maxSize[5];
     BOOL excStream;
     BOOL excFile;
     char excType[50];
-    char streamString[50];
+    char streamString[125];
+	BOOL excUntitled;
+	BOOL remPath;
 } MSNStuff;
 static MSNStuff msnConf;
 std::string lasttitle;
@@ -106,11 +108,16 @@ static void trimLog(char *fileName, int maxSize, std::string datePrefix) {
 
 static void WINAPI SetNowPlaying(BOOL close,std::string SRC)
 {
+	char *filename=NULL;
 	char *title=NULL;
+	char *alttitle=NULL;
 	char *artist=NULL;
 	char *album=NULL;
+	char *date=NULL;
+	char *track=NULL;
+	char *genre=NULL;
+	char *comment=NULL;
 	char *filetype=NULL;
-	char *filename=NULL;
 	int resultIdx;
 	std::string resultStr;
 	int excludeIdx;
@@ -131,14 +138,26 @@ static void WINAPI SetNowPlaying(BOOL close,std::string SRC)
 	dtMinute << std::setfill('0') << std::setw(2) << (aTime->tm_min);
 	dtSecond << std::setfill('0') << std::setw(2) << (aTime->tm_sec);
 	int maxfileSize = std::stoi(msnConf.maxSize);
+	std::string cropName;
+	int notitle=0;
 	
 	if (!close) {
 		if (msnConf.showCues) title=xmpfmisc->GetTag(TAG_TRACK_TITLE); // get cue title
-		if (!title) title=xmpfmisc->GetTag(TAG_TITLE); // get track title
+		if (!title) { title=xmpfmisc->GetTag(TAG_TITLE); } else { alttitle=xmpfmisc->GetTag(TAG_TITLE); } // get track title if no cue title
+		if (!filename) filename=xmpfmisc->GetTag(TAG_FILENAME); // get track filename
+
+		if (!title) {  // use filename if track title or cue title does not exist
+			title=xmpfmisc->GetTag(TAG_FILENAME);
+			notitle=1;
+		}
+
 		if (!artist) artist=xmpfmisc->GetTag(TAG_ARTIST); // get track artist
 		if (!album) album=xmpfmisc->GetTag(TAG_ALBUM); // get track album
+		if (!date) date=xmpfmisc->GetTag(TAG_DATE); // get track date
+		if (!track) track=xmpfmisc->GetTag(TAG_TRACK); // get track number
+		if (!genre) genre=xmpfmisc->GetTag(TAG_GENRE); // get track genre
+		if (!comment) comment=xmpfmisc->GetTag(TAG_COMMENT); // get track comment
 		if (!filetype) filetype=xmpfmisc->GetTag(TAG_FILETYPE); // get track filetype
-		if (!filename) filename=xmpfmisc->GetTag(TAG_FILENAME); // get track filename
 	}
 
 	if (msnConf.excFile || msnConf.excStream) {
@@ -162,7 +181,7 @@ static void WINAPI SetNowPlaying(BOOL close,std::string SRC)
 		}
 	}
 
-	if (title) {
+	if (title || !msnConf.excUntitled) {
 		if (ignoreThis == "") {
 			if (title != lasttitle) {
 				// TRACK LAST 
@@ -180,7 +199,11 @@ static void WINAPI SetNowPlaying(BOOL close,std::string SRC)
 					}
 				}
 				while (resultStr.find("%1") != -1) {
-					resultStr.replace(resultStr.find("%1"), 2, title);
+					if (!title || notitle==1) {
+						resultStr.replace(resultStr.find("%1"), 2, "-");
+					} else {
+						resultStr.replace(resultStr.find("%1"), 2, title);
+					}
 				}
 				while (resultStr.find("%2") != -1) {
 					if (!artist) {
@@ -196,6 +219,34 @@ static void WINAPI SetNowPlaying(BOOL close,std::string SRC)
 						resultStr.replace(resultStr.find("%3"), 2, album);
 					}
 				}
+				while (resultStr.find("%4") != -1) {
+					if (!date) {
+						resultStr.replace(resultStr.find("%4"), 2, "-");
+					} else {
+						resultStr.replace(resultStr.find("%4"), 2, date);
+					}
+				}
+				while (resultStr.find("%5") != -1) {
+					if (!track) {
+						resultStr.replace(resultStr.find("%5"), 2, "-");
+					} else {
+						resultStr.replace(resultStr.find("%5"), 2, track);
+					}
+				}
+				while (resultStr.find("%6") != -1) {
+					if (!genre) {
+						resultStr.replace(resultStr.find("%6"), 2, "-");
+					} else {
+						resultStr.replace(resultStr.find("%6"), 2, genre);
+					}
+				}
+				while (resultStr.find("%7") != -1) {
+					if (!comment) {
+						resultStr.replace(resultStr.find("%7"), 2, "-");
+					} else {
+						resultStr.replace(resultStr.find("%7"), 2, comment);
+					}
+				}
 				while (resultStr.find("%8") != -1) {
 					if (!filetype) {
 						resultStr.replace(resultStr.find("%8"), 2, "-");
@@ -207,7 +258,18 @@ static void WINAPI SetNowPlaying(BOOL close,std::string SRC)
 					if (!filetype) {
 						resultStr.replace(resultStr.find("%0"), 2, "-");
 					} else {
-						resultStr.replace(resultStr.find("%0"), 2, filename);
+						cropName = filename;
+						if (msnConf.remPath) {
+							cropName = cropName.substr(cropName.find_last_of("\\/")+1);
+						}
+						resultStr.replace(resultStr.find("%0"), 2, cropName);
+					}
+				}
+				while (resultStr.find("%z") != -1) {
+					if (!alttitle) {
+						resultStr.replace(resultStr.find("%z"), 2, "-");
+					} else {
+						resultStr.replace(resultStr.find("%z"), 2, alttitle);
 					}
 				}
 				while (resultStr.find("%y") != -1) {
@@ -227,6 +289,9 @@ static void WINAPI SetNowPlaying(BOOL close,std::string SRC)
 				}
 				while (resultStr.find("%s") != -1) {
 					resultStr.replace(resultStr.find("%s"), 2, dtSecond.str());
+				}
+				while (resultStr.find("%n") != -1) {
+					resultStr.replace(resultStr.find("%n"), 2, "\n");
 				}
 				while (resultStr.find("%t") != -1) {
 					resultStr.replace(resultStr.find("%t"), 2, "\t");
@@ -318,6 +383,8 @@ static void *WINAPI DSP_New()
 	for(int i = 0; i < dfSize.length(); ++i){
 		msnConf.maxSize[i] = dfSize[i];
 	}
+    msnConf.excUntitled = TRUE;
+    msnConf.remPath = FALSE;
 
     return (void*)1;
 }
@@ -359,11 +426,13 @@ static BOOL CALLBACK DSPDialogProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 					msnConf.excFile = (BST_CHECKED==MESS(30, BM_GETCHECK, 0, 0));
 					msnConf.excStream = (BST_CHECKED==MESS(40, BM_GETCHECK, 0, 0));
 					MESS(99001, WM_GETTEXT, 255, msnConf.filePath);
-					MESS(99002, WM_GETTEXT, 50, msnConf.fileString);
+					MESS(99002, WM_GETTEXT, 125, msnConf.fileString);
 					MESS(99003, WM_GETTEXT, 25, msnConf.actionConfig);
 					MESS(99004, WM_GETTEXT, 5, msnConf.maxSize);
 					MESS(99005, WM_GETTEXT, 50, msnConf.excType);
-					MESS(99006, WM_GETTEXT, 50, msnConf.streamString);
+					MESS(99006, WM_GETTEXT, 125, msnConf.streamString);
+					msnConf.excUntitled = (BST_CHECKED==MESS(50, BM_GETCHECK, 0, 0));
+					msnConf.remPath = (BST_CHECKED==MESS(60, BM_GETCHECK, 0, 0));
 				case IDCANCEL:
 					EndDialog(hWnd, 0);
 					break;
@@ -383,6 +452,8 @@ static BOOL CALLBACK DSPDialogProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 			SetDlgItemText(hWnd, 99004, msnConf.maxSize);
 			SetDlgItemText(hWnd, 99005, msnConf.excType);
 			SetDlgItemText(hWnd, 99006, msnConf.streamString);
+			MESS(50, BM_SETCHECK, msnConf.excUntitled?BST_CHECKED:BST_UNCHECKED, 0);
+			MESS(60, BM_SETCHECK, msnConf.remPath?BST_CHECKED:BST_UNCHECKED, 0);
 			return TRUE;
     }
 	return FALSE;
