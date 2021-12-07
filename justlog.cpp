@@ -351,7 +351,7 @@ static void WINAPI DSP_About(HWND win)
 {
 	MessageBox(win,
 		"Just Log - General Plugin\nCopyright (c) 2021 Nathan Hindley",
-		"Just Log - General Plugin [Rev.5]",
+		"Just Log - General Plugin [v1.8.2]",
 		MB_ICONINFORMATION);
 }
 
