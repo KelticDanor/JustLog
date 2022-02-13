@@ -49,6 +49,8 @@ static MSNStuff msnConf;
 std::string lasttitle;
 XMPFILE xmpFile;
 DWORD xmpType=-1;
+std::string actualPath = "";
+char tempPath[255];
 
 static XMPDSP dsp = {
     XMPDSP_FLAG_TITLE,
@@ -67,14 +69,38 @@ static XMPDSP dsp = {
 	DSP_NewTitle,
 };
 
-static void trimLog(char *fileName, int maxSize, std::string datePrefix) {
+static void revisePath(char *revisePath) {
+	std::string calcPath;
+	std::string setPath = revisePath;
+	if (setPath == "") {
+		setPath = msnConf.filePath;
+	}
+    if (setPath[0] == '.' || (setPath.find("\\/") == -1 && setPath.find("\\") == -1)) {
+        TCHAR exePath[FILENAME_MAX];
+        GetModuleFileName(nullptr, exePath, FILENAME_MAX);
+        std::string::size_type slashPos = std::string(exePath).find_last_of("\\/");
+        calcPath = std::string(exePath).substr(0, slashPos);
+        calcPath.append("\\");
+        calcPath.append(setPath);
+
+		char fullFilename[255];
+		GetFullPathName(calcPath.c_str(), 255, fullFilename, nullptr);
+		calcPath = fullFilename;
+    } else {
+        calcPath = setPath;
+    }
+	actualPath = calcPath;
+	actualPath[actualPath.size()] = '\0';
+}
+
+static void trimLog(std::string fileName, int maxSize, std::string datePrefix) {
 	int fileSize;
 	std::string readLine;
 	std::string tempName;
 	std::string archName;
 
 	do {
-		std::ifstream infile(msnConf.filePath, std::ifstream::ate | std::ifstream::binary);
+		std::ifstream infile(actualPath, std::ifstream::ate | std::ifstream::binary);
 		fileSize = infile.tellg();
 		infile.close();
 		if (fileSize > (maxSize * 1000)) {
@@ -94,13 +120,13 @@ static void trimLog(char *fileName, int maxSize, std::string datePrefix) {
 				tempfile.close();
 				oldfile.close();
 
-				remove(fileName);
-				rename(tempName.c_str(), fileName);
+				remove(fileName.c_str());
+				rename(tempName.c_str(), fileName.c_str());
 			} else {
 				// RENAME OLD
-				archName = msnConf.filePath;
+				archName = actualPath;
 				archName.replace((archName.length()-4), 4, " " + datePrefix + ".old");
-				rename(msnConf.filePath,archName.c_str());
+				rename(actualPath.c_str(),archName.c_str());
 			}
 		}
 	} while (fileSize > (maxSize * 1000));
@@ -299,16 +325,16 @@ static void WINAPI SetNowPlaying(BOOL close,std::string SRC)
 
 				// CHECK LOG SIZE IF NECESSARY
 				if (maxfileSize > 0) {
-					trimLog(msnConf.filePath,maxfileSize,(dtYear.str() + dtMonth.str() + dtDay.str() + " " + dtHour.str() + dtMinute.str() + dtSecond.str()));
+					trimLog(actualPath,maxfileSize,(dtYear.str() + dtMonth.str() + dtDay.str() + " " + dtHour.str() + dtMinute.str() + dtSecond.str()));
 				}
 
 				// APPLY STRING TO LOG FILE
 				if (strstr(msnConf.actionConfig, "Replace")) {
-					std::ofstream outfile (msnConf.filePath);
+					std::ofstream outfile (actualPath);
 					outfile << resultStr.c_str() << std::endl;
 					outfile.close();
 				} else if (strstr(msnConf.actionConfig, "Append")) {
-					std::ofstream outfile (msnConf.filePath, std::ios_base::app);
+					std::ofstream outfile (actualPath, std::ios_base::app);
 					outfile << resultStr.c_str() << std::endl;
 					outfile.close();
 				}
@@ -326,6 +352,11 @@ static void WINAPI SetNowPlaying(BOOL close,std::string SRC)
 
 static void WINAPI DSP_NewTrack(void *inst, const char *file)
 {
+	// MAP
+	if (actualPath == "") {
+		revisePath("");
+	}
+	// PERFORM
 	lasttitle = "";
 	if (file != NULL) {
 		xmpFile = xmpffile->Open(file);
@@ -341,6 +372,11 @@ static void WINAPI DSP_NewTrack(void *inst, const char *file)
 
 static void WINAPI DSP_NewTitle(void *inst, const char *title)
 {
+	// MAP
+	if (actualPath == "") {
+		revisePath("");
+	}
+	// PERFORM
 	lasttitle = "";
 	if (xmpType != -1) {
 		SetNowPlaying(FALSE,"NEWTITLE");
@@ -351,7 +387,7 @@ static void WINAPI DSP_About(HWND win)
 {
 	MessageBox(win,
 		"Just Log - General Plugin\nCopyright (c) 2021 Nathan Hindley",
-		"Just Log - General Plugin [v1.8.2]",
+		"Just Log - General Plugin [v1.9]",
 		MB_ICONINFORMATION);
 }
 
@@ -420,6 +456,11 @@ static BOOL CALLBACK DSPDialogProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 	switch (msg) {
 		case WM_COMMAND:
 			switch (LOWORD(wParam)) {
+				case 80:
+					MESS(99001, WM_GETTEXT, 255, tempPath);
+					revisePath(tempPath);
+					MESS(70, WM_SETTEXT, 0, actualPath.c_str());
+					break;
 				case IDOK:
 					msnConf.showCues = (BST_CHECKED==MESS(10, BM_GETCHECK, 0, 0));
 					msnConf.newLogSet = (BST_CHECKED==MESS(20, BM_GETCHECK, 0, 0));
@@ -433,13 +474,16 @@ static BOOL CALLBACK DSPDialogProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 					MESS(99006, WM_GETTEXT, 125, msnConf.streamString);
 					msnConf.excUntitled = (BST_CHECKED==MESS(50, BM_GETCHECK, 0, 0));
 					msnConf.remPath = (BST_CHECKED==MESS(60, BM_GETCHECK, 0, 0));
+					revisePath("");
 				case IDCANCEL:
+					revisePath("");
 					EndDialog(hWnd, 0);
 					break;
 			}
 			break;
         case WM_INITDIALOG:
 			HWND szAction = GetDlgItem(hWnd, 99003);
+			revisePath("");
 			SendMessage(szAction, (UINT) CB_ADDSTRING, (WPARAM) 0, (LPARAM) TEXT ("Append"));
 			SendMessage(szAction, (UINT) CB_ADDSTRING, (WPARAM) 0, (LPARAM) TEXT ("Replace"));
 			SendMessage(szAction, CB_SELECTSTRING, (WPARAM) -1, (LPARAM) msnConf.actionConfig);
@@ -454,6 +498,7 @@ static BOOL CALLBACK DSPDialogProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 			SetDlgItemText(hWnd, 99006, msnConf.streamString);
 			MESS(50, BM_SETCHECK, msnConf.excUntitled?BST_CHECKED:BST_UNCHECKED, 0);
 			MESS(60, BM_SETCHECK, msnConf.remPath?BST_CHECKED:BST_UNCHECKED, 0);
+			MESS(70, WM_SETTEXT, 0, actualPath.c_str());
 			return TRUE;
     }
 	return FALSE;
