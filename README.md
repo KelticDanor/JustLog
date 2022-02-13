@@ -5,6 +5,11 @@ JustLog General Plugin for the XMPlay audio player
 Just a short and sweet plug-in to log files played by XMPlay.
 
 # Change Log
+v1.9
+- Compiled with /MT flag to remove runtime dependencies
+- Relative paths should now always work relative to XMPlay.exe
+- Config now has a path display and test button to show view relative paths easier
+
 v1.8.2
 - Added %4 tag for date
 - Added %5 tag for track
