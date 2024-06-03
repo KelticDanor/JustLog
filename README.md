@@ -5,6 +5,12 @@ JustLog General Plugin for the XMPlay audio player
 Just a short and sweet plug-in to log files played by XMPlay.
 
 # Change Log
+v1.92
+- Exclude untitled will now count - as also being untitled
+
+v1.91
+- Fixed the exclude untitled option
+
 v1.9
 - Compiled with /MT flag to remove runtime dependencies
 - Relative paths should now always work relative to XMPlay.exe
