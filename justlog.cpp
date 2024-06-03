@@ -54,7 +54,7 @@ char tempPath[255];
 
 static XMPDSP dsp = {
     XMPDSP_FLAG_TITLE,
-    "Just Log",
+    "Just Log v1.92",
     DSP_About,
     DSP_New,
     DSP_Free,
@@ -172,9 +172,11 @@ static void WINAPI SetNowPlaying(BOOL close,std::string SRC)
 		if (!title) { title=xmpfmisc->GetTag(TAG_TITLE); } else { alttitle=xmpfmisc->GetTag(TAG_TITLE); } // get track title if no cue title
 		if (!filename) filename=xmpfmisc->GetTag(TAG_FILENAME); // get track filename
 
-		if (!title && !msnConf.excUntitled) {  // use filename if track title or cue title does not exist
+		if ((!title || title == "-") && !msnConf.excUntitled) {  // use filename if track title or cue title does not exist
 			title=xmpfmisc->GetTag(TAG_FILENAME);
 			notitle=1;
+		} else if ((!title || title == "-") && msnConf.excUntitled) {
+			ignoreThis = "NOTITLE";
 		}
 
 		if (!artist) artist=xmpfmisc->GetTag(TAG_ARTIST); // get track artist
@@ -387,7 +389,7 @@ static void WINAPI DSP_About(HWND win)
 {
 	MessageBox(win,
 		"Just Log - General Plugin\nCopyright (c) 2021 Nathan Hindley",
-		"Just Log - General Plugin [v1.9]",
+		"Just Log - General Plugin [v1.92]",
 		MB_ICONINFORMATION);
 }
 
