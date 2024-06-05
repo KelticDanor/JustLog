@@ -5,6 +5,9 @@ JustLog General Plugin for the XMPlay audio player
 Just a short and sweet plug-in to log files played by XMPlay.
 
 # Change Log
+v1.93
+- Exclude untitled will now count " " as also being untitled
+
 v1.92
 - Exclude untitled will now count - as also being untitled
 
