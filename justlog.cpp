@@ -44,6 +44,7 @@ typedef struct {
     char streamString[125];
 	BOOL excUntitled;
 	BOOL remPath;
+	BOOL showDebug;
 } MSNStuff;
 static MSNStuff msnConf;
 std::string lasttitle;
@@ -54,7 +55,7 @@ char tempPath[255];
 
 static XMPDSP dsp = {
     XMPDSP_FLAG_TITLE,
-    "Just Log v1.92",
+    "Just Log v1.93",
     DSP_About,
     DSP_New,
     DSP_Free,
@@ -166,16 +167,18 @@ static void WINAPI SetNowPlaying(BOOL close,std::string SRC)
 	int maxfileSize = std::stoi(msnConf.maxSize);
 	std::string cropName;
 	int notitle=0;
+	char* debugS = "[";
+	char* debugF = "]";
 	
 	if (!close) {
 		if (msnConf.showCues) title=xmpfmisc->GetTag(TAG_TRACK_TITLE); // get cue title
 		if (!title) { title=xmpfmisc->GetTag(TAG_TITLE); } else { alttitle=xmpfmisc->GetTag(TAG_TITLE); } // get track title if no cue title
 		if (!filename) filename=xmpfmisc->GetTag(TAG_FILENAME); // get track filename
 
-		if ((!title || title == "-" || title == " ") && !msnConf.excUntitled) {  // use filename if track title or cue title does not exist
+		if ((!title || title[0] == '-') && !msnConf.excUntitled) {  // use filename if track title or cue title does not exist
 			title=xmpfmisc->GetTag(TAG_FILENAME);
 			notitle=1;
-		} else if ((!title || title == "-" || title == " ") && msnConf.excUntitled) {
+		} else if ((!title || title[0] == '-') && msnConf.excUntitled) {
 			ignoreThis = "NOTITLE";
 		}
 
@@ -210,6 +213,13 @@ static void WINAPI SetNowPlaying(BOOL close,std::string SRC)
 	}
 
 	if (title) {
+		if (msnConf.showDebug) {
+			std::ofstream outfile(actualPath, std::ios_base::app);
+			outfile << debugS << title << debugF << std::endl;
+			outfile << debugS << ignoreThis.c_str() << debugF << std::endl;
+			outfile.close();
+		}
+
 		if (ignoreThis == "") {
 			if (title != lasttitle) {
 				// TRACK LAST 
@@ -389,7 +399,7 @@ static void WINAPI DSP_About(HWND win)
 {
 	MessageBox(win,
 		"Just Log - General Plugin\nCopyright (c) 2021 Nathan Hindley",
-		"Just Log - General Plugin [v1.92]",
+		"Just Log - General Plugin [v1.93]",
 		MB_ICONINFORMATION);
 }
 
@@ -423,6 +433,7 @@ static void *WINAPI DSP_New()
 	}
     msnConf.excUntitled = TRUE;
     msnConf.remPath = FALSE;
+	msnConf.showDebug = FALSE;
 
     return (void*)1;
 }
@@ -476,6 +487,7 @@ static BOOL CALLBACK DSPDialogProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 					MESS(99006, WM_GETTEXT, 125, msnConf.streamString);
 					msnConf.excUntitled = (BST_CHECKED==MESS(50, BM_GETCHECK, 0, 0));
 					msnConf.remPath = (BST_CHECKED==MESS(60, BM_GETCHECK, 0, 0));
+					msnConf.showDebug = (BST_CHECKED == MESS(61, BM_GETCHECK, 0, 0));
 					revisePath("");
 				case IDCANCEL:
 					revisePath("");
@@ -500,6 +512,7 @@ static BOOL CALLBACK DSPDialogProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 			SetDlgItemText(hWnd, 99006, msnConf.streamString);
 			MESS(50, BM_SETCHECK, msnConf.excUntitled?BST_CHECKED:BST_UNCHECKED, 0);
 			MESS(60, BM_SETCHECK, msnConf.remPath?BST_CHECKED:BST_UNCHECKED, 0);
+			MESS(61, BM_SETCHECK, msnConf.showDebug ? BST_CHECKED : BST_UNCHECKED, 0);
 			MESS(70, WM_SETTEXT, 0, actualPath.c_str());
 			return TRUE;
     }

@@ -44,6 +44,7 @@ BEGIN
     CONTROL         "Exclude Files",30,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,109,206,60,10
     CONTROL         "Exclude Streams",40,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,188,206,60,10
     CONTROL         "Exclude Untitled",50,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,259,206,75,10
+    CONTROL         "Show Debug", 61, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 259, 216, 75, 10
     CONTROL         "Show cuesheet and net stream titles (requires 3.4.1)",10,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,252,190,10
     DEFPUSHBUTTON   "OK",IDOK,324,249,50,14
