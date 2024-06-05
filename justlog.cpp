@@ -172,10 +172,10 @@ static void WINAPI SetNowPlaying(BOOL close,std::string SRC)
 		if (!title) { title=xmpfmisc->GetTag(TAG_TITLE); } else { alttitle=xmpfmisc->GetTag(TAG_TITLE); } // get track title if no cue title
 		if (!filename) filename=xmpfmisc->GetTag(TAG_FILENAME); // get track filename
 
-		if ((!title || title == "-") && !msnConf.excUntitled) {  // use filename if track title or cue title does not exist
+		if ((!title || title == "-" || title == " ") && !msnConf.excUntitled) {  // use filename if track title or cue title does not exist
 			title=xmpfmisc->GetTag(TAG_FILENAME);
 			notitle=1;
-		} else if ((!title || title == "-") && msnConf.excUntitled) {
+		} else if ((!title || title == "-" || title == " ") && msnConf.excUntitled) {
 			ignoreThis = "NOTITLE";
 		}
 
