@@ -6,7 +6,7 @@ Just a short and sweet plug-in to log files played by XMPlay.
 
 # Change Log
 v1.93
-- Show debug option added.
+- Show debug option added
 
 v1.92
 - Exclude untitled will now count - as also being untitled
